@@ -1,4 +1,5 @@
 ﻿using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace SkepERP.Models
 {
@@ -12,13 +13,24 @@ namespace SkepERP.Models
 
     public class PersonalRelation
     {
+        [Key]
         public int Id { get; set; }
 
+        [Required]
+        [CustomValidation(typeof(PersonalRelation), nameof(ValidateType))]
         public RelationType RelationType { get; set; }
 
+        [Required]
         public int PersonId { get; set; }
 
-        public int PersonOtherId { get; set; }
+        [Required]
+        public int RelatedPersonId { get; set; }
+
+        [ForeignKey("PersonId")]
+        public virtual Person Person { get; set; }
+
+        [ForeignKey("RelatedPersonId")]
+        public virtual Person RelatedPerson { get; set; }
 
         public static ValidationResult ValidateType(RelationType type, ValidationContext context)
         {

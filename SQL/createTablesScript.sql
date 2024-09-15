@@ -1,26 +1,26 @@
-﻿CREATE TABLE Person (
-	Id INT NOT NULL PRIMARY KEY IDENTITY, -- იდენტიფიკატორი
-	FirstName NVARCHAR(50) NOT NULL, -- სახელი
-	LastName NVARCHAR(50) NOT NULL, -- გვარი
-	Gender INT NOT NULL, -- სქესი
-	PersonalId CHAR(11) NOT NULL, -- პირადი ნომერი
-	DateOfBirth DATE NOT NULL, -- დაბადების თარიღი
+﻿CREATE TABLE PERSON (
+	ID INT NOT NULL PRIMARY KEY IDENTITY, -- იდენტიფიკატორი
+	FIRSTNAME NVARCHAR(50) NOT NULL, -- სახელი
+	LASTNAME NVARCHAR(50) NOT NULL, -- გვარი
+	GENDER INT NOT NULL, -- სქესი
+	PERSONALID CHAR(11) NOT NULL, -- პირადი ნომერი
+	DATEOFBIRTH DATE NOT NULL, -- დაბადების თარიღი
 );
 
-Create Table Phone (
+Create Table PHONE (
 	ID INT NOT NULL PRIMARY KEY IDENTITY, -- იდენტიფიკატორი
-	PhoneType INT NOT NULL, -- ტელეფონის ნომრის ტიპი
-	Number NVARCHAR(50), -- ნომერი
-	PersonId INT, -- ფიზიკური პირი
-	CONSTRAINT FK_Person_Phone FOREIGN KEY (PersonId) REFERENCES Person(Id) -- Foreign key შეზღუდვა
+	PHONETYPE INT NOT NULL, -- ტელეფონის ნომრის ტიპი
+	NUMBER NVARCHAR(50), -- ნომერი
+	PERSONID INT, -- ფიზიკური პირი
+	CONSTRAINT FK_PERSON_PHONE FOREIGN KEY (PERSONID) REFERENCES PERSON(Id) -- Foreign key შეზღუდვა
 );
 
-Create Table PersonalRelations (
+Create Table PERSONALRELATIONS (
 	ID INT NOT NULL PRIMARY KEY IDENTITY, -- იდენტიფიკატორი
-	PersonId INT NOT NULL, -- ფიზიკური პირი
-	RelatedPersonId INT NOT NULL, -- ფიზიკური პირი
-	RelationType INT NOT NULL, -- კავშირის ტიპი
-	CONSTRAINT UC_Person_Relation UNIQUE (PersonId, RelatedPersonId, RelationType),  -- უნიკალურობის შეზღუდვა
-    CONSTRAINT FK_Person_PersonId FOREIGN KEY (PersonId) REFERENCES Person(Id),    -- Foreign key შეზღუდვა
-    CONSTRAINT FK_Person_RelatedPersonId FOREIGN KEY (RelatedPersonId) REFERENCES Person(Id) -- Foreign key შეზღუდვა
+	PERSONID INT NOT NULL, -- ფიზიკური პირი
+	RELATEDPERSONID INT NOT NULL, -- ფიზიკური პირი
+	RELATIONTYPE INT NOT NULL, -- კავშირის ტიპი
+	CONSTRAINT UC_PERSON_RELATION UNIQUE (PERSONID, RELATEDPERSONID, RELATIONTYPE),  -- უნიკალურობის შეზღუდვა
+    CONSTRAINT FK_PERSON_PERSONID FOREIGN KEY (PERSONID) REFERENCES PERSON(Id),    -- Foreign key შეზღუდვა
+    CONSTRAINT FK_PERSON_RELATEDPERSONID FOREIGN KEY (RELATEDPERSONID) REFERENCES PERSON(Id) -- Foreign key შეზღუდვა
 );

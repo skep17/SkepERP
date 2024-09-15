@@ -12,21 +12,32 @@ namespace SkepERP.Models
 
     public class Person
     {
+        [Key]
         public int Id { get; set; }
 
+        [Required]
+        [CustomValidation(typeof(Person), nameof(ValidateName))]
         public string FirstName { get; set; }
 
+        [Required]
+        [CustomValidation(typeof(Person), nameof(ValidateName))]
         public string LastName { get; set; }
 
+        [Required]
+        [CustomValidation(typeof(Person), nameof(ValidateGender))]
         public Gender Gender { get; set; }
 
+        [Required]
+        [CustomValidation(typeof(Person), nameof(ValidateIdNum))]
         public string IdNum { get; set; }
 
+        [Required]
+        [CustomValidation(typeof(Person), nameof(ValidateAge))]
         public DateOnly DateOfBirth { get; set; }
 
-        public List<Phone> Phones { get; set; } = new List<Phone>();
+        public ICollection<Phone> Phones { get; set; }
 
-        public List<PersonalRelation> PersonalRelations { get; set; } = new List<PersonalRelation>();
+        public ICollection<PersonalRelation> PersonalRelations { get; set; }
 
 
         public static ValidationResult ValidateName(string name, ValidationContext context)
