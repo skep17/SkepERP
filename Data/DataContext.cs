@@ -10,10 +10,25 @@ namespace SkepERP.Data
 
         }
 
-        public DbSet<Person> Persons { get; set; }
+        public DbSet<Person> Person { get; set; }
 
-        public DbSet<Phone> Phones { get; set; }
+        public DbSet<Phone> Phone { get; set; }
 
         public DbSet<PersonalRelation> PersonalRelations { get; set; }
+
+        protected override void OnModelCreating(ModelBuilder modelBuilder)
+        {
+            modelBuilder.Entity<PersonalRelation>()
+                .HasOne(pr => pr.Person)
+                .WithMany(p => p.PersonalRelations)
+                .HasForeignKey(pr => pr.PersonId)
+                .OnDelete(DeleteBehavior.Cascade);
+
+            modelBuilder.Entity<PersonalRelation>()
+                .HasOne(pr => pr.RelatedPerson)
+                .WithMany()
+                .HasForeignKey(pr => pr.RelatedPersonId)
+                .OnDelete(DeleteBehavior.NoAction);
+        }
     }
 }

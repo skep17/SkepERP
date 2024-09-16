@@ -18,7 +18,7 @@ namespace SkepERP.Models
 
         [Required]
         [CustomValidation(typeof(PersonalRelation), nameof(ValidateType))]
-        public RelationType RelationType { get; set; }
+        public RelationType Type { get; set; }
 
         [Required]
         public int PersonId { get; set; }

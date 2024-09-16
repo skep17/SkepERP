@@ -1,4 +1,5 @@
 ﻿using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 using System.Runtime.Serialization;
 using System.Text.RegularExpressions;
 
@@ -101,7 +102,7 @@ namespace SkepERP.Models
             return age >= 18 ? ValidationResult.Success : new ValidationResult("Person must be at least 18 years old.");
         }
 
-        public static ValidationResult? ValidateIdNum(string idNum, ValidationContext context)
+        public static ValidationResult ValidateIdNum(string idNum, ValidationContext context)
         {
             ValidationResult ret;
 

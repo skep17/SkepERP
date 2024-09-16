@@ -1,4 +1,4 @@
-﻿select t2.FIRSTNAME + ' ' + t2.LASTNAME as "NAME", t1.NUMBER, t1.PHONETYPE
+﻿select t2.FIRSTNAME + ' ' + t2.LASTNAME as "NAME", t1.NUMBER, t1.TYPE
 from PHONE t1
 	join PERSON t2
 	on t2.ID = t1.PERSONID
@@ -6,7 +6,7 @@ order by t2.ID;
 
 select t2.FIRSTNAME + ' ' + t2.LASTNAME as "PERSON",
 	t3.FIRSTNAME + ' ' + t3.LASTNAME as "RELATED PERSON",
-	t1.RELATIONTYPE
+	t1.TYPE
 from PERSONALRELATIONS t1
 	join PERSON t2
 	on t2.ID = t1.PERSONID
