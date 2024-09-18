@@ -16,37 +16,48 @@ namespace SkepERP.Models
         public int Id { get; set; }
 
         [Required]
-        [CustomValidation(typeof(Phone), nameof(ValidateType))]
         public PhoneType Type { get; set; }
 
         [Required]
-        [StringLength(50, MinimumLength = 4, ErrorMessage = "Phone number must be between 4 and 50 characters.")]
         public string Number { get; set; }
 
-        [Required]
         public int PersonId { get; set; }
 
         [ForeignKey("PersonId")]
         public virtual Person Person { get; set; }
 
-        public static ValidationResult ValidateType(PhoneType type, ValidationContext context)
+        public static string ValidateType(PhoneType type)
         {
-            ValidationResult ret;
+            string ret;
 
             switch (type)
             {
                 case PhoneType.Mobile:
                 case PhoneType.Office:
                 case PhoneType.Home:
-                    ret = ValidationResult.Success;
+                    ret = string.Empty;
                     break;
 
                 default:
-                    ret = new ValidationResult("Invalid phone type");
+                    ret = "Invalid phone type";
                     break;
             }
 
             return ret;
+        }
+
+        public static string ValidateNumber(string number)
+        {
+            return number.Length >= 4 && number.Length <= 50 ? string.Empty : "Phone number must be between 4 and 50 characters.";
+        }
+
+        public string Validate()
+        {
+            string ret = Phone.ValidateType(Type);
+
+            if (!string.IsNullOrEmpty(ret)) return ret;
+
+            return ValidateNumber(Number);
         }
     }
 }

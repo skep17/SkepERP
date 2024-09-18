@@ -17,23 +17,18 @@ namespace SkepERP.Models
         public int Id { get; set; }
 
         [Required]
-        [CustomValidation(typeof(Person), nameof(ValidateName))]
         public string FirstName { get; set; }
 
         [Required]
-        [CustomValidation(typeof(Person), nameof(ValidateName))]
         public string LastName { get; set; }
 
         [Required]
-        [CustomValidation(typeof(Person), nameof(ValidateGender))]
         public Gender Gender { get; set; }
 
         [Required]
-        [CustomValidation(typeof(Person), nameof(ValidateIdNum))]
         public string IdNum { get; set; }
 
         [Required]
-        [CustomValidation(typeof(Person), nameof(ValidateAge))]
         public DateOnly DateOfBirth { get; set; }
 
         public ICollection<Phone> Phones { get; set; }
@@ -41,14 +36,14 @@ namespace SkepERP.Models
         public ICollection<PersonalRelation> PersonalRelations { get; set; }
 
 
-        public static ValidationResult ValidateName(string name, ValidationContext context)
+        public static string ValidateName(string name)
         {
-            ValidationResult ret;
+            string ret;
 
 
             if (string.IsNullOrEmpty(name) || (name.Length < 2 || name.Length > 50))
             {
-                ret = new ValidationResult("First name and Last name must be between 2 and 50 characters.");
+                ret = "First name and Last name must be between 2 and 50 characters.";
             }
             else
             {
@@ -58,66 +53,85 @@ namespace SkepERP.Models
                 // Unicode-ში ქართული ასოების რეინჯი
                 var geoPattern = new Regex(@"^[\u10A0-\u10FF]+$");
 
-                if (latPattern.IsMatch(name))
+                if (latPattern.IsMatch(name) || geoPattern.IsMatch(name))
                 {
-                    ret = ValidationResult.Success;
-                }
-                else if (geoPattern.IsMatch(name))
-                {
-                    ret = ValidationResult.Success;
+                    ret = string.Empty;
                 }
                 else
                 {
-                    ret = new ValidationResult("First name and last name must contain either only Latin or only Georgian letters.");
+                    ret = "First name and last name must contain either only Latin or only Georgian letters.";
                 }
             }
 
             return ret;
         }
 
-        public static ValidationResult ValidateGender(Gender gender, ValidationContext context)
+        public static string ValidateGender(Gender gender)
         {
-            ValidationResult ret;
+            string ret;
 
             switch (gender)
             {
                 case Gender.Male:
                 case Gender.Female:
-                    ret = ValidationResult.Success;
+                    ret = string.Empty;
                     break;
 
                 default:
-                    ret = new ValidationResult("Invalid gender");
+                    ret = "Invalid gender";
                     break;
             }
 
             return ret;
         }
 
-        public static ValidationResult ValidateAge(DateOnly dateOfBirth, ValidationContext context)
+        public static string ValidateAge(DateOnly dateOfBirth)
         {
             int age = DateTime.Now.Year - dateOfBirth.Year;
             if (dateOfBirth > DateOnly.FromDateTime(DateTime.Now.AddYears(-age))) age--;
 
-            return age >= 18 ? ValidationResult.Success : new ValidationResult("Person must be at least 18 years old.");
+            return age >= 18 ? string.Empty : "Person must be at least 18 years old.";
         }
 
-        public static ValidationResult ValidateIdNum(string idNum, ValidationContext context)
+        public static string ValidateIdNum(string idNum)
         {
-            ValidationResult ret;
+            string ret;
 
 
             if (string.IsNullOrEmpty(idNum) || idNum.Length != 11)
             {
-                ret = new ValidationResult("Identification Number must be 11 digits.");
+                ret = "Identification Number must be 11 digits.";
             }
             else
             {
                 // ციფრების რეინჯი
                 var digitPattern = new Regex(@"^\d+$");
 
-                ret = digitPattern.IsMatch(idNum) ? ValidationResult.Success : new ValidationResult("First name and last name must contain either only Latin or only Georgian letters.");
+                ret = digitPattern.IsMatch(idNum) ? string.Empty : "Identification Number must contain only digits.";
             }
+
+            return ret;
+        }
+
+        public string Validate()
+        {
+            string ret = Person.ValidateName(FirstName);
+
+            if (!string.IsNullOrEmpty(ret)) return ret;
+
+            ret = Person.ValidateName(LastName);
+
+            if (!string.IsNullOrEmpty(ret)) return ret;
+
+            ret = Person.ValidateGender(Gender);
+
+            if (!string.IsNullOrEmpty(ret)) return ret;
+
+            ret = Person.ValidateAge(DateOfBirth);
+
+            if (!string.IsNullOrEmpty(ret)) return ret;
+
+            ret = Person.ValidateIdNum(IdNum);
 
             return ret;
         }
