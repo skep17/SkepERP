@@ -1,5 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace SkepERP.Models
 {
@@ -17,7 +18,6 @@ namespace SkepERP.Models
         public int Id { get; set; }
 
         [Required]
-        [CustomValidation(typeof(PersonalRelation), nameof(ValidateType))]
         public RelationType Type { get; set; }
 
         [Required]
@@ -32,9 +32,9 @@ namespace SkepERP.Models
         [ForeignKey("RelatedPersonId")]
         public virtual Person RelatedPerson { get; set; }
 
-        public static ValidationResult ValidateType(RelationType type, ValidationContext context)
+        public static string ValidateType(RelationType type)
         {
-            ValidationResult ret;
+            string ret;
 
             switch (type)
             {
@@ -42,13 +42,20 @@ namespace SkepERP.Models
                 case RelationType.Colleague:
                 case RelationType.Acquaintance:
                 case RelationType.Relative:
-                    ret = ValidationResult.Success;
+                    ret = string.Empty;
                     break;
 
                 default:
-                    ret = new ValidationResult("Invalid relation type");
+                    ret = "Invalid relation type";
                     break;
             }
+
+            return ret;
+        }
+
+        public string Validate()
+        {
+            string ret = PersonalRelation.ValidateType(Type);
 
             return ret;
         }

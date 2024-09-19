@@ -30,7 +30,7 @@ namespace SkepERP.Controllers
             return Ok(persons);
         }
 
-        [HttpGet("GetPersonById")]
+        [HttpGet("GetPersonById/{id}")]
         [ProducesResponseType(200, Type = typeof(PersonDto))]
         public IActionResult GetPersonById(int id)
         {
@@ -61,5 +61,112 @@ namespace SkepERP.Controllers
 
             return CreatedAtAction(nameof(GetPersonById), new { id = result?.Id }, result);
         }
+
+        [HttpPut("UpdatePerson/{id}")]
+        [ProducesResponseType(200, Type = typeof(PersonDto))]
+        public IActionResult UpdatePerson(int id, [FromBody] UpdatePersonDto person)
+        {
+            PersonDto? result;
+
+            try
+            {
+                result = _personRepository.UpdatePerson(id, person);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
+
+            return Ok(result);
+        }
+
+        [HttpPost("AddPhones/{id}")]
+        [ProducesResponseType(200, Type = typeof(PersonDto))]
+        public IActionResult AddPhones(int id, UpdatePhoneDto phones)
+        {
+            PersonDto? result;
+
+            try
+            {
+                result = _personRepository.AddPhones(id, phones);
+            }
+            catch(Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
+
+            return Ok(result);
+        }
+
+        [HttpDelete("RemovePhones/{id}")]
+        [ProducesResponseType(200, Type = typeof(PersonDto))]
+        public IActionResult RemovePhones(int id, UpdatePhoneDto phones)
+        {
+            PersonDto? result;
+
+            try
+            {
+                result = _personRepository.RemovePhones(id, phones);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
+
+            return Ok(result);
+        }
+
+        [HttpPost("AddRelations/{id}")]
+        [ProducesResponseType(200, Type = typeof(PersonDto))]
+        public IActionResult AddRelations(int id, UpdateRelationsDto relations)
+        {
+            PersonDto? result;
+
+            try
+            {
+                result = _personRepository.AddRelations(id, relations);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
+
+            return Ok(result);
+        }
+
+        [HttpDelete("RemoveRelations/{id}")]
+        [ProducesResponseType(200, Type = typeof(PersonDto))]
+        public IActionResult RemoveRelations(int id, UpdateRelationsDto relations)
+        {
+            PersonDto? result;
+
+            try
+            {
+                result = _personRepository.RemoveRelations(id, relations);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
+
+            return Ok(result);
+        }
+
+        [HttpDelete("DeletePerson/{id}")]
+        [ProducesResponseType(200)]
+        public IActionResult DeletePerson(int id)
+        {
+            try
+            {
+                _personRepository.DeletePerson(id);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
+
+            return Ok($"Person with id {id} deleted.");
+        }
+
     }
 }

@@ -12,6 +12,6 @@
 
         public DateOnly DateOfBirth { get; set; }
 
-        public ICollection<CreatePhoneDto> Phones { get; set; }
+        public ICollection<CreatePhoneDto>? Phones { get; set; }
     }
 }
