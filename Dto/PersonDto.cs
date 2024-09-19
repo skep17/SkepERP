@@ -23,5 +23,10 @@ namespace SkepERP.Dto
         public ICollection<PhoneDto>? Phones { get; set; }
 
         public ICollection<RelationDto>? PersonalRelations { get; set; }
+
+        public override string ToString()
+        {
+            return $"PersonDto: [ FirstName: {FirstName}, LastName: {LastName}, Gender: {Gender}, IdNum: {IdNum}, DateOfBirth: {DateOfBirth}, Phones: {Phones?.ToString()}, PersonalRelations: {PersonalRelations?.ToString()} ]";
+        }
     }
 }

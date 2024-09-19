@@ -16,6 +16,8 @@ namespace SkepERP.Data
 
         public DbSet<PersonalRelation> PersonalRelations { get; set; }
 
+        public DbSet<ErrorLog> ErrorLog { get; set; }
+
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             modelBuilder.Entity<PersonalRelation>()

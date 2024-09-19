@@ -58,34 +58,33 @@ namespace SkepERP.Repository
 
             var person = _context.Person.Find(id);
 
-            if (person != null)
+            if (person == null) throw new ArgumentException($"Person with id {id} doesn't exist.");
+
+            ret = new PersonDto
             {
-                ret = new PersonDto
-                {
-                    Id = person.Id,
-                    FirstName = person.FirstName,
-                    LastName = person.LastName,
-                    Gender = person.Gender.ToString(),
-                    IdNum = person.IdNum,
-                    DateOfBirth = person.DateOfBirth,
-                    Phones = _context.Phone
-                                        .Where(ph => ph.PersonId == person.Id)
-                                        .Select(ph => new PhoneDto
-                                        {
-                                            PhoneType = ph.Type.ToString(),
-                                            PhoneNumber = ph.Number,
-                                        })
-                                        .ToList(),
-                    PersonalRelations = _context.PersonalRelations
-                                                .Where(rel => rel.PersonId == person.Id)
-                                                .Select(rel => new RelationDto
-                                                {
-                                                    RelationType = rel.Type.ToString(),
-                                                    PersonId = rel.RelatedPersonId,
-                                                })
-                                                .ToList(),
-                };
-            }
+                Id = person.Id,
+                FirstName = person.FirstName,
+                LastName = person.LastName,
+                Gender = person.Gender.ToString(),
+                IdNum = person.IdNum,
+                DateOfBirth = person.DateOfBirth,
+                Phones = _context.Phone
+                                    .Where(ph => ph.PersonId == person.Id)
+                                    .Select(ph => new PhoneDto
+                                    {
+                                        PhoneType = ph.Type.ToString(),
+                                        PhoneNumber = ph.Number,
+                                    })
+                                    .ToList(),
+                PersonalRelations = _context.PersonalRelations
+                                            .Where(rel => rel.PersonId == person.Id)
+                                            .Select(rel => new RelationDto
+                                            {
+                                                RelationType = rel.Type.ToString(),
+                                                PersonId = rel.RelatedPersonId,
+                                            })
+                                            .ToList(),
+            };
 
             return ret;
         }
@@ -141,7 +140,7 @@ namespace SkepERP.Repository
 
             var oldPerson = _context.Person
                                     .Include(p => p.Phones)
-                                    .First(p => p.Id == id);
+                                    .FirstOrDefault(p => p.Id == id);
 
             if (oldPerson == null) throw new ArgumentException($"Person with id {id} not found.");
 
@@ -187,7 +186,7 @@ namespace SkepERP.Repository
             if (phones == null || phones.Phones == null) throw new ArgumentNullException(nameof(phones));
             var oldPerson = _context.Person
                                     .Include(p => p.Phones)
-                                    .First(p => p.Id == id);
+                                    .FirstOrDefault(p => p.Id == id);
 
             if (oldPerson == null) throw new ArgumentException($"Person with id {id} not found.");
 
@@ -221,7 +220,7 @@ namespace SkepERP.Repository
 
             var oldPerson = _context.Person
                                     .Include(p => p.Phones)
-                                    .First(p => p.Id == id);
+                                    .FirstOrDefault(p => p.Id == id);
 
             if (oldPerson == null) throw new ArgumentException($"Person with id {id} not found.");
 
@@ -265,7 +264,7 @@ namespace SkepERP.Repository
 
             var oldPerson = _context.Person
                                     .Include(p => p.PersonalRelations)
-                                    .First(p => p.Id == id);
+                                    .FirstOrDefault(p => p.Id == id);
 
             if (oldPerson == null) throw new ArgumentException($"Person with id {id} not found.");
 
@@ -288,7 +287,7 @@ namespace SkepERP.Repository
 
                 var relatedPerson = _context.Person
                                             .Include(p => p.PersonalRelations)
-                                            .First(p => p.Id == rel.PersonId);
+                                            .FirstOrDefault(p => p.Id == rel.PersonId);
 
                 if (relatedPerson == null) throw new ArgumentException($"Person with id {rel.PersonId} not found to add in relations for person with {id}.");
 
@@ -318,7 +317,7 @@ namespace SkepERP.Repository
 
             var oldPerson = _context.Person
                                     .Include(p => p.PersonalRelations)
-                                    .First(p => p.Id == id);
+                                    .FirstOrDefault(p => p.Id == id);
 
             if (oldPerson == null) throw new ArgumentException($"Person with id {id} not found.");
 
@@ -366,7 +365,7 @@ namespace SkepERP.Repository
 
         public void DeletePerson(int id)
         {
-            var person = _context.Person.First(p => p.Id == id);
+            var person = _context.Person.FirstOrDefault(p => p.Id == id);
 
             if (person == null) throw new ArgumentException($"Person with id {id} not found.");
 

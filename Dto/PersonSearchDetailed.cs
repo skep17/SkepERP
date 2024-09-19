@@ -1,4 +1,6 @@
-﻿namespace SkepERP.Dto
+﻿using SkepERP.Models;
+
+namespace SkepERP.Dto
 {
     public class PersonSearchDetailed
     {
@@ -11,5 +13,10 @@
         public string IdNum { get; set; }
 
         public DateOnly DateOfBirth { get; set; }
+
+        public override string ToString()
+        {
+            return $"PersonSearchDetailed: [ FirstName: {FirstName}, LastName: {LastName}, Gender: {Gender}, IdNum: {IdNum}, DateOfBirth: {DateOfBirth} ]";
+        }
     }
 }
