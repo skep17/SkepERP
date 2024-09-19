@@ -14,5 +14,9 @@ namespace SkepERP.Interfaces
         public PersonDto? AddRelations(int id, UpdateRelationsDto relations);
         public PersonDto? RemoveRelations(int id, UpdateRelationsDto relations);
         public void DeletePerson(int id);
+        public ICollection<PersonDto> GetPersonsLike(PersonSearchLike person);
+        public ICollection<PersonDto> GetPersonsDetailed(PersonSearchDetailed person);
+        public ICollection<PersonDto> GetPersonsPaged(int pageNum);
+        public PersonCount GetPersonCount();
     }
 }

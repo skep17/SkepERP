@@ -16,7 +16,7 @@ namespace SkepERP.Controllers
             this._personRepository = personRepository;
         }
 
-        [HttpGet("GetPersons")]
+        [HttpGet("GetPersons/All")]
         [ProducesResponseType(200, Type = typeof(ICollection<PersonDto>))]
         public IActionResult GetPersons()
         {
@@ -28,6 +28,76 @@ namespace SkepERP.Controllers
             }
 
             return Ok(persons);
+        }
+
+        [HttpGet("GetPersonCount")]
+        [ProducesResponseType(200, Type = typeof(PersonCount))]
+        public IActionResult GetPersonCount()
+        {
+            var personCount = _personRepository.GetPersonCount();
+
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
+
+            return Ok(personCount);
+        }
+
+        [HttpGet("GetPersonsPaged/{pageNum}")]
+        [ProducesResponseType(200, Type = typeof(ICollection<PersonDto>))]
+        public IActionResult GetPersonsPaged(int pageNum)
+        {
+            IActionResult ret;
+            try
+            {
+                var personPage = _personRepository.GetPersonsPaged(pageNum);
+                ret = Ok(personPage);
+            }
+            catch (Exception ex)
+            {
+                ret = BadRequest(ex.Message);
+            }
+
+            return ret;
+        }
+
+        [HttpGet("GetPersons/Like")]
+        [ProducesResponseType(200, Type = typeof(ICollection<PersonDto>))]
+        public IActionResult GetPersonsLike([FromQuery] PersonSearchLike person)
+        {
+            IActionResult ret;
+
+            try
+            {
+               var result = _personRepository.GetPersonsLike(person);
+               ret = Ok(result);
+            }
+            catch (Exception ex)
+            {
+                ret = BadRequest(ex.Message);
+            }
+
+            return ret;
+        }
+
+        [HttpGet("GetPersons/Detailed")]
+        [ProducesResponseType(200, Type = typeof(ICollection<PersonDto>))]
+        public IActionResult GetPersonsDetailed([FromQuery] PersonSearchDetailed person)
+        {
+            IActionResult ret;
+
+            try
+            {
+                var result = _personRepository.GetPersonsDetailed(person);
+                ret = Ok(result);
+            }
+            catch (Exception ex)
+            {
+                ret = BadRequest(ex.Message);
+            }
+
+            return ret;
         }
 
         [HttpGet("GetPersonById/{id}")]

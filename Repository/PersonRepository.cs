@@ -2,9 +2,11 @@
 using Microsoft.IdentityModel.Tokens;
 using SkepERP.Data;
 using SkepERP.Dto;
+using SkepERP.Helpers;
 using SkepERP.Interfaces;
 using SkepERP.Models;
 using System;
+using System.Reflection;
 
 namespace SkepERP.Repository
 {
@@ -375,6 +377,165 @@ namespace SkepERP.Repository
             _context.PersonalRelations.RemoveRange(relations);
             _context.Person.Remove(person);
             _context.SaveChanges();
+        }
+
+        public ICollection<PersonDto> GetPersonsLike(PersonSearchLike person)
+        {
+            ArgumentNullException.ThrowIfNull(person);
+
+            var filteredPersons = _context.Person
+                .Where(p =>
+                    (!string.IsNullOrEmpty(person.FirstName) && p.FirstName.Contains(person.FirstName)) ||
+                    (!string.IsNullOrEmpty(person.LastName) && p.LastName.Contains(person.LastName)) ||
+                    (!string.IsNullOrEmpty(person.IdNum) && p.IdNum.Contains(person.IdNum))
+                );
+
+            var personList = filteredPersons
+                .Select(p => new PersonDto
+                {
+                    Id = p.Id,
+                    FirstName = p.FirstName,
+                    LastName = p.LastName,
+                    Gender = p.Gender.ToString(),
+                    IdNum = p.IdNum,
+                    DateOfBirth = p.DateOfBirth,
+
+                    Phones = _context.Phone
+                        .Where(ph => ph.PersonId == p.Id)
+                        .Select(ph => new PhoneDto
+                        {
+                            PhoneType = ph.Type.ToString(),
+                            PhoneNumber = ph.Number,
+                        })
+                        .ToList(),
+
+                    PersonalRelations = _context.PersonalRelations
+                        .Where(rel => rel.PersonId == p.Id)
+                        .Select(rel => new RelationDto
+                        {
+                            RelationType = rel.Type.ToString(),
+                            PersonId = rel.RelatedPersonId,
+                        })
+                        .ToList(),
+                })
+                .ToList();
+
+            return personList;
+        }
+
+        public ICollection<PersonDto> GetPersonsDetailed(PersonSearchDetailed person)
+        {
+            ArgumentNullException.ThrowIfNull(person);
+
+            Validator.ValidateOrThrow(person.FirstName, Person.ValidateName);
+
+            Validator.ValidateOrThrow(person.LastName, Person.ValidateName);
+
+            Validator.ValidateOrThrow(person.IdNum, Person.ValidateIdNum);
+
+            Validator.ValidateOrThrow((Gender)person.Gender, Person.ValidateGender);
+
+            Validator.ValidateOrThrow(person.DateOfBirth, Person.ValidateAge);
+
+            var filteredPersons = _context.Person
+                .Where(p =>
+                    p.FirstName == person.FirstName &&
+                    p.LastName == person.LastName &&
+                    p.IdNum == person.IdNum &&
+                    p.Gender == (Gender)person.Gender &&
+                    p.DateOfBirth == person.DateOfBirth
+                );
+
+            var personList = filteredPersons
+                .Select(p => new PersonDto
+                {
+                    Id = p.Id,
+                    FirstName = p.FirstName,
+                    LastName = p.LastName,
+                    Gender = p.Gender.ToString(),
+                    IdNum = p.IdNum,
+                    DateOfBirth = p.DateOfBirth,
+
+                    Phones = _context.Phone
+                        .Where(ph => ph.PersonId == p.Id)
+                        .Select(ph => new PhoneDto
+                        {
+                            PhoneType = ph.Type.ToString(),
+                            PhoneNumber = ph.Number,
+                        })
+                        .ToList(),
+
+                    PersonalRelations = _context.PersonalRelations
+                        .Where(rel => rel.PersonId == p.Id)
+                        .Select(rel => new RelationDto
+                        {
+                            RelationType = rel.Type.ToString(),
+                            PersonId = rel.RelatedPersonId,
+                        })
+                        .ToList(),
+                })
+                .ToList();
+
+            return personList;
+        }
+
+        public ICollection<PersonDto> GetPersonsPaged(int pageNum)
+        {
+            PersonCount personCount = GetPersonCount();
+
+            if(pageNum < personCount.TotalPages || pageNum > personCount.TotalPages)
+            {
+                throw new ArgumentOutOfRangeException();
+            }
+
+            int skip = (pageNum - 1) * PersonDto.PAGESIZE;
+
+            var personList = _context.Person
+                                     .OrderBy(p => p.Id)
+                                     .Skip(skip)
+                                     .Take(PersonDto.PAGESIZE)
+                                     .Select(p => new PersonDto
+                                     {
+                                        Id = p.Id,
+                                        FirstName = p.FirstName,
+                                        LastName = p.LastName,
+                                        Gender = p.Gender.ToString(),
+                                        IdNum = p.IdNum,
+                                        DateOfBirth = p.DateOfBirth,
+
+                                        Phones = _context.Phone
+                                                        .Where(ph => ph.PersonId == p.Id)
+                                                        .Select(ph => new PhoneDto
+                                                        {
+                                                            PhoneType = ph.Type.ToString(),
+                                                            PhoneNumber = ph.Number,
+                                                        })
+                                                        .ToList(),
+
+                                        PersonalRelations = _context.PersonalRelations
+                                                        .Where(rel => rel.PersonId == p.Id)
+                                                        .Select(rel => new RelationDto
+                                                        {
+                                                            RelationType = rel.Type.ToString(),
+                                                            PersonId = rel.RelatedPersonId,
+                                                        })
+                                                        .ToList(),
+                                     })
+                                     .ToList();
+
+            return personList;
+        }
+
+        public PersonCount GetPersonCount()
+        {
+            PersonCount personCount = new PersonCount();
+
+            personCount.TotalNumber = _context.Person.Count();
+            personCount.PageSize = PersonDto.PAGESIZE;
+            personCount.TotalPages = personCount.TotalNumber / personCount.PageSize;
+            if(personCount.TotalNumber % personCount.PageSize > 0) personCount.TotalPages++;
+
+            return personCount;
         }
     }
 }

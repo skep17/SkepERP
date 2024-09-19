@@ -3,8 +3,11 @@ using System.ComponentModel.DataAnnotations;
 
 namespace SkepERP.Dto
 {
+
     public class PersonDto
     {
+        public static readonly int PAGESIZE = 10;
+
         public int Id { get; set; }
 
         public string FirstName { get; set; }
